@@ -1,0 +1,25 @@
+node_modules/
+.expo/
+dist/
+npm-debug.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+web-build/
+
+# macOS
+.DS_Store
+
+# npm install react react-dom
+# npm instal 
+# npm i -g expo-cli
+# npm install react-hook-form
+# npx expo install react-native-maps
+# npm install @react-navigation/native
+# npx expo install react-native-screens react-native-safe-area-context
+# npm install react-native-screens react-native-safe-area-context
+# npm install @react-navigation/native-stack
+# npm install @react-navigation/stack
