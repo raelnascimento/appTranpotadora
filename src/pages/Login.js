@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
-
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup'
+
+/*=====================================================================
+                            FireBase Auth
+=======================================================================*/
+
+import { signOut, getAuth, signInWithEmailAndPassword} from "firebase/auth";
+import { async } from '@firebase/util';
+import { auth } from '../firebase/Firebase';
 
 const schema = yup.object({
   username: yup.string().required("Informe seu username"),
@@ -23,32 +30,49 @@ export default function Login( {navigation}) {
   }
 
 
+/*===========================================================
+
+                      Firebase Auth
+
+=============================================================*/
+
+
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginSenha, setLoginSenha] = useState("");
+
+  const register = async () => {
+
+    const user = await createUserWithEmailAndPassword()
+
+  };
+
+  const login = async () => {
+    try {
+      const user = await signInWithEmailAndPassword(
+        auth,
+        loginEmail,
+        loginSenha
+      );
+      console.log(user)
+      navigation.navigate('Cadastro')
+    } catch (error){
+      console.log(error.message)
+    }
+  };
+  
+  const logout = async () => {
+    await signOut(auth);
+  };
+
+
+/*=============================   FIM   ==============================*/
+
+
 
   return (
     <View style={styles.container}>
 
       <Text style={styles.title}>Bem-vindo(a)</Text>
-
-      <Controller
-        control={control}
-        name="username"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={[
-              styles.input, {
-                borderWidth: errors.username && 1,
-                borderColor: errors.username && '#ff375b'
-              }
-            ]}
-            onChangeText={onChange}
-            onBlur={onBlur} //chamado quando o textinput é tocado
-            value={value}
-            placeholder="Seu username"
-          />
-        )}
-      />
-
-      {errors.username && <Text style={styles.labelError}>{errors.username?.message}</Text>}
 
       <Controller
         control={control}
@@ -63,8 +87,12 @@ export default function Login( {navigation}) {
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
-            value={value}
+            valueEmail={value}
             placeholder="Digite seu email"
+            onChange={(event) => {
+              setLoginEmail(event.target.value);
+            }}
+            
           />
         )}
       />
@@ -84,9 +112,12 @@ export default function Login( {navigation}) {
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
-            value={value}
+            valueSenha={value}
             placeholder="Digite sua senha"
             secureTextEntry={true}
+            onChange={(event) => {
+              setLoginSenha(event.target.value);
+            }}
           />
         )}
       />
@@ -94,11 +125,20 @@ export default function Login( {navigation}) {
       {errors.password && <Text style={styles.labelError}>{errors.password?.message}</Text>}
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit(handleSingIn)} >
-        <Text style={styles.buttonText}>Acessar</Text>
+        <Text style={styles.buttonText} onClick={login}>Acessar</Text>
       </TouchableOpacity>
     </View>
   );
 }
+
+
+/*===========================================================
+
+                             Style       
+
+=============================================================*/
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -148,3 +188,4 @@ const styles = StyleSheet.create({
 
 });
 
+/*=============================   FIM   ==============================*/

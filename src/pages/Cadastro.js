@@ -1,48 +1,97 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup'
+/*=====================================================================
+                            FireBase Auth
+=======================================================================*/
+
+import { signOut, getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { async } from "@firebase/util";
+import { auth } from "../firebase/Firebase";
 
 const schema = yup.object({
   username: yup.string().required("Informe seu nome completo"),
   email: yup.string().email("Email Invalido").required("Informe seu email"),
-  password: yup.string().min(6, "A senha deve ter pelo menos 6 digitos").required("Informe sua senha"),
-  cpf: yup.string().min(11, "Digite seu CPF corretamente, min 11").required("Informe seu cpf").max(11, "CPF inválido"),
+  password: yup
+    .string()
+    .min(6, "A senha deve ter pelo menos 6 digitos")
+    .required("Informe sua senha"),
+  cpf: yup
+    .string()
+    .min(11, "Digite seu CPF corretamente, min 11")
+    .required("Informe seu cpf")
+    .max(11, "CPF inválido"),
   uf: yup.string().max(2, "Máximo 2 digítos").required("Informe sua UF"),
   cidade: yup.string().required("Informe sua cidade"),
   telefone: yup.string().required("Informe seu telefone"),
-})
+});
 
-
-export default function Cadastro({navigation}) {
-  const { control, handleSubmit, formState: { errors } } = useForm({
-    resolver: yupResolver(schema)
-  })
+export default function Cadastro({ navigation }) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   function handleSingIn(data) {
-    console.log(data),
-    navigation.navigate('Veiculo')
+    console.log(data), navigation.navigate("Veiculo");
   }
 
+  /*===========================================================
 
+                      Firebase Auth
+
+=============================================================*/
+
+  const [registerEmail, setRegisterEmail] = useState("");
+  const [registerSenha, setRegisterSenha] = useState("");
+
+  const register = async () => {
+    try {
+      const user = await createUserWithEmailAndPassword(
+        auth,
+        registerEmail,
+        registerSenha
+      );
+      console.log(user);
+      navigation.navigate("Login");
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const logout = async () => {
+    await signOut(auth);
+  };
+
+  /*=============================   FIM   ==============================*/
 
   return (
     <View style={styles.container}>
-
       <Text style={styles.title}>Realize seu Cadastro</Text>
-
+{/* 
       <Controller
         control={control}
         name="username"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.username && 1,
-                borderColor: errors.username && '#ff375b'
-              }
+                borderColor: errors.username && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
@@ -52,28 +101,36 @@ export default function Cadastro({navigation}) {
         )}
       />
 
-      {errors.username && <Text style={styles.labelError}>{errors.username?.message}</Text>}
-
+      {errors.username && (
+        <Text style={styles.labelError}>{errors.username?.message}</Text>
+      )}
+ */}
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.email && 1,
-                borderColor: errors.email && '#ff375b'
-              }
+                borderColor: errors.email && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
             value={value}
             placeholder="Digite seu email"
+            onChange={(event) => {
+              setRegisterEmail(event.target.value);
+            }}
           />
         )}
       />
 
-      {errors.email && <Text style={styles.labelError}>{errors.email?.message}</Text>}
+      {errors.email && (
+        <Text style={styles.labelError}>{errors.email?.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -81,32 +138,39 @@ export default function Cadastro({navigation}) {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.password && 1,
-                borderColor: errors.password && '#ff375b'
-              }
+                borderColor: errors.password && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
             value={value}
             placeholder="Digite sua senha"
             secureTextEntry={true}
+            onChange={(event) => {
+              setRegisterSenha(event.target.value);
+            }}
           />
         )}
       />
 
-      {errors.password && <Text style={styles.labelError}>{errors.password?.message}</Text>}
+      {errors.password && (
+        <Text style={styles.labelError}>{errors.password?.message}</Text>
+      )}
 
-      <Controller
+      {/* <Controller
         control={control}
         name="cpf"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.cpf && 1,
-                borderColor: errors.cpf && '#ff375b'
-              }
+                borderColor: errors.cpf && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
@@ -117,7 +181,9 @@ export default function Cadastro({navigation}) {
         )}
       />
 
-      {errors.cpf && <Text style={styles.labelError}>{errors.cpf?.message}</Text>}
+      {errors.cpf && (
+        <Text style={styles.labelError}>{errors.cpf?.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -125,10 +191,11 @@ export default function Cadastro({navigation}) {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.cidade && 1,
-                borderColor: errors.cidade && '#ff375b'
-              }
+                borderColor: errors.cidade && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
@@ -139,7 +206,9 @@ export default function Cadastro({navigation}) {
         )}
       />
 
-      {errors.cidade && <Text style={styles.labelError}>{errors.cidade?.message}</Text>}
+      {errors.cidade && (
+        <Text style={styles.labelError}>{errors.cidade?.message}</Text>
+      )}
 
       <Controller
         control={control}
@@ -147,10 +216,11 @@ export default function Cadastro({navigation}) {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.uf && 1,
-                borderColor: errors.uf && '#ff375b'
-              }
+                borderColor: errors.uf && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
@@ -168,10 +238,11 @@ export default function Cadastro({navigation}) {
         render={({ field: { onChange, onBlur, value } }) => (
           <TextInput
             style={[
-              styles.input, {
+              styles.input,
+              {
                 borderWidth: errors.telefone && 1,
-                borderColor: errors.telefone && '#ff375b'
-              }
+                borderColor: errors.telefone && "#ff375b",
+              },
             ]}
             onChangeText={onChange}
             onBlur={onBlur} //chamado quando o textinput é tocado
@@ -180,62 +251,72 @@ export default function Cadastro({navigation}) {
             secureTextEntry={true}
           />
         )}
-      />
+      /> */}
 
-
-      <TouchableOpacity style={styles.button} onPress={handleSubmit(handleSingIn)} >
-        <Text style={styles.buttonText}>Enviar</Text>
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit(handleSingIn)}
+      >
+        <Text style={styles.buttonText} onClick={register}>Enviar</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
+
+/*===========================================================
+
+                             Style       
+
+=============================================================*/
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0F4284',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 18
+    backgroundColor: "#0F4284",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 18,
   },
   title: {
     fontSize: 30,
     marginBottom: 20,
-    color: '#121212',
-    fontWeight: 'bold',
-    color: 'white'
+    color: "#121212",
+    fontWeight: "bold",
+    color: "white",
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 40,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     padding: 15,
     borderRadius: 15,
     margin: 5,
     borderWidth: 1,
-    borderColor: 'black'
+    borderColor: "black",
   },
   button: {
-    width: '50%',
+    width: "50%",
     height: 30,
-    backgroundColor: 'green',
-    textAlign: 'center',
+    backgroundColor: "green",
+    textAlign: "center",
     borderRadius: 10,
-    marginTop: 20
+    marginTop: 20,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
     fontSize: 18,
-    padding: 2
+    padding: 2,
   },
 
   labelError: {
-    alignSelf: 'flex-start',
-    color: '#ff375b',
+    alignSelf: "flex-start",
+    color: "#ff375b",
     marginBottom: 8,
-    paddingLeft: 15
-  }
-
+    paddingLeft: 15,
+  },
 });
 
+/*=============================   FIM   ==============================*/

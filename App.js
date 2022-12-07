@@ -9,11 +9,12 @@ import Cadastro from './src/pages/Cadastro';
 import Login from './src/pages/Login';
 import Veiculo from './src/pages/Veiculo';
 import Pedidos from './src/pages/Pedidos';
+import { firebase } from './src/firebase/Firebase';
 
 
 const Stack = createNativeStackNavigator();
 
-function App() {
+export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName='Home'>
@@ -27,4 +28,3 @@ function App() {
   );
 }
 
-export default App;
