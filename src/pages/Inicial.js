@@ -3,7 +3,7 @@ import React from 'react';
 
 
 
-export default function Home({navigation}) {
+export default function Inicial({navigation}) {
 
   return (
       <ImageBackground source={{ uri: 'https://images.pexels.com/photos/5025517/pexels-photo-5025517.jpeg?auto=compress&cs=tinysrgb&w=1600' }} style={styles.imageBackground}>

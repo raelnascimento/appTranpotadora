@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View,ImageBackground, TextInput, TouchableOpacity } from 'react-native';
 
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -19,7 +19,7 @@ export default function Login( {navigation}) {
 
   function handleSingIn(data) {
     console.log(data),
-    navigation.navigate('Cadastro')
+    navigation.navigate('Pedidos')
   }
 
 
